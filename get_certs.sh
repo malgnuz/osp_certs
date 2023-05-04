@@ -1,4 +1,5 @@
 #!/bin/bash
+node=$(hostname)
 principals=(`getcert list | grep principal | awk -F ":" '{print $2}' | tr -d " "`)
 status=(`getcert list | grep status | awk -F ":" '{print $2}' | tr -d " "`)
 certificates=(`getcert list | grep "certificate:" | awk -F ":" '{print $2}' | awk -F "=" '{print $3}' | tr -d "'"`)
@@ -10,7 +11,8 @@ do
   serial_numbers[${count}]=$(openssl x509 -in ${cert} -noout -text | grep -i "Serial Number" | awk -F ":" '{print $2}' | awk -F " " '{print $1}')
   count=$[count+1]
 done
+echo "HOSTNAME|PRINCIPAL|STATUS|SUBJECT|SERIAL NUMBER"
 for ((i=0;i<${#subjects[@]};i++))
 do
-  echo "${subjects[$i]} | ${principals[$i]} | ${serial_numbers[$i]}"
+  echo "${node} | ${principals[$i]} | ${status[$i]} | ${subjects[$i]} | ${serial_numbers[$i]}"
 done
